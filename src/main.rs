@@ -12,8 +12,9 @@ extern crate rocket_contrib;
 use rocket::response::NamedFile;
 use rocket::Config;
 use rocket_contrib::serve::StaticFiles;
+use rocket_contrib::json::Json;
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct GithubRepository {
     name: String,
     html_url: String,
@@ -40,20 +41,11 @@ fn index() -> NamedFile{
 }
 
 #[get("/api/v0/github")]
-fn get_repository() -> &'static str{
-    "This will be an api endpoint"
-}
-
-
-fn get_github_repos() -> Result<Vec<GithubRepository>> {
+fn get_github_repos() -> Json<Vec<GithubRepository>> {
     let req_url = format!("https://api.github.com/users/nehri97/repos");
-    println!("[request url]: {}", req_url);
-    let mut response = reqwest::get(&req_url)?;
-    let repos: Vec<GithubRepository> = response.json()?;
-    for repo in &repos {
-        println!("{}", repo.name);
-    }
-    Ok(repos)
+    let mut response = reqwest::get(&req_url).unwrap();
+    let repos: Vec<GithubRepository> = response.json().unwrap();
+    Json(repos)
 }
 
 fn configure() -> rocket::Config {
@@ -66,9 +58,29 @@ fn configure() -> rocket::Config {
 }
 
 
-fn main() {
+fn rocket() -> rocket::Rocket {
     rocket::custom(configure())
-        .mount("/", routes![index])
+        .mount("/", routes![index, get_github_repos])
         .mount("/public/", StaticFiles::from("./static"))
-        .launch();
+}
+
+fn main() {
+        rocket().launch();
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use rocket::local::Client;
+    use rocket::http::{Status, ContentType};
+
+    #[test]
+    fn index() {
+        let client = Client::new(rocket()).expect("Valid Rocket Instance");
+        let content_type = ContentType::HTML;
+        let mut response = client.get("/").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.content_type(), Some(content_type));
+    }
 }
