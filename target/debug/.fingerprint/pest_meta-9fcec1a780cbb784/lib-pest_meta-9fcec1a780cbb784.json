@@ -1,1 +1,0 @@
-{"rustc":6822648460763268258,"features":"[]","target":5225305720047771972,"profile":11870183705523825133,"path":8165340701711561289,"deps":[["maplit v1.0.1","maplit",5016211013861487502],["pest v2.1.0","pest",10421156478006234254]],"local":[{"Precalculated":"2.1.0"}],"rustflags":[],"edition":"Edition2015"}
