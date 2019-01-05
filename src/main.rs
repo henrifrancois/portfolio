@@ -55,9 +55,18 @@ fn get_github_repos() -> Result<Vec<GithubRepository>> {
     Ok(repos)
 }
 
+fn configure() -> rocket::Config {
+    let mut config = Config::active().expect("Could not load configuration.");
+    if let Ok(port_str) = env::var("PORT") {
+        let port = port_str.parse().expect("Could not parse PORT.");
+        config.set_port(port);
+    }
+    config
+}
+
 
 fn main() {
-    rocket::ignite()
+    rocket::custom(configure())
         .mount("/", routes![index])
         .mount("/public/", StaticFiles::from("./static"))
         .launch();
