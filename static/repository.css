@@ -1,0 +1,42 @@
+body {
+	margin-right: 10%;
+	margin-left: 10%;
+	margin-bottom: 10%;
+	margin-top: none;
+	color: #3f5b6a;
+	background-color: #fff;
+}
+
+a {
+	color: #f6546a;
+}
+/*
+#app {
+	display: grid;
+	grid-template-columns: 3fr 6fr 3fr;
+	grid-template-rows: 3fr 6fr 3fr;
+}*/
+
+#repository {
+	grid-row-start: 2;
+	grid-column-start: 2;
+}
+
+.card {
+	align-self: center;
+	font-size: small;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-radius: 10px;
+	color: #fff;
+	background-color: #3f5b6a;
+}
+
+.nav {
+	margin-top: 1%;
+	font-size: large;
+}
+
+.container {
+	align-self: center;
+}
