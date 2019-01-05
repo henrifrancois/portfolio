@@ -10,6 +10,7 @@ extern crate reqwest;
 extern crate rocket_contrib;
 
 use rocket::response::NamedFile;
+use rocket::Config;
 use rocket_contrib::serve::StaticFiles;
 
 #[derive(Deserialize, Debug)]
@@ -57,7 +58,7 @@ fn get_github_repos() -> Result<Vec<GithubRepository>> {
 
 fn configure() -> rocket::Config {
     let mut config = Config::active().expect("Could not load configuration.");
-    if let Ok(port_str) = env::var("PORT") {
+    if let Ok(port_str) = std::env::var("PORT") {
         let port = port_str.parse().expect("Could not parse PORT.");
         config.set_port(port);
     }
