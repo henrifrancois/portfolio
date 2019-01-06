@@ -27,8 +27,16 @@ const ReadMe = Vue.component('readme', {
 		}
 	},
 	methods: {
-
-	}
+		GithubReadmeContents(){
+			console.log(this.github_projects)
+			axios
+			.get('https://api.github.com/repos/nehri97/learning-rust/readme')
+			.then(response => (this.contents = atob(response.data.content)))
+		}
+	},
+    created() {
+	this.GithubReadmeContents();
+    }
 })
 
 const Repository = Vue.component('repository', {
@@ -86,28 +94,22 @@ const Repository = Vue.component('repository', {
 		fetchAllProjects() {
 			this.fetchGithubProjects();
 			this.fetchGitLabProjects();
-		},
-		GithubReadmeContents(){
-			console.log(this.github_projects)
-			axios
-			.get('https://api.github.com/repos/nehri97/learning-rust/readme')
-			.then(response => console.log(atob(response.data.content)))
 		}
 	},
 	created() {
 		return this.fetchAllProjects();
 	},
 	mounted() {
-		return this.GithubReadmeContents();
 	}
 })
 
 
 const router = new VueRouter({
-	routes: [
+    mode: 'history',
+    routes: [
 		{path: '/', component: Repository},
-		{path: '/profile', component: Profile},
-		{path: '/readme', component: ReadMe}
+		{path: 'profile', component: Profile},
+		{path: 'readme', component: ReadMe}
 	]
 })
 
@@ -119,7 +121,7 @@ var app = new Vue({
 	<ul class="nav justify-content-end">
 	  <li class="nav-item">
 	  	<a class="nav-link">
-	    <router-link to="/profile">Profile</router-link>
+	    <router-link to="profile">Profile</router-link>
 	    </a>
 	  </li>
 	  <li class="nav-item">
@@ -129,7 +131,7 @@ var app = new Vue({
 	  </li>
 	  <li class="nav-item">
 	  	<a class="nav-link">
-	    <router-link to="/readme">README</router-link>
+	    <router-link to="readme">README</router-link>
 	    </a>
 	  </li>	  
 	</ul>

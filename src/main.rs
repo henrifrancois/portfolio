@@ -16,14 +16,21 @@ use rocket_contrib::json::Json;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct GithubRepository {
-    name: String,
-    html_url: String,
+    pub name: String,
+    pub html_url: String,
 }
 
-#[derive(Deserialize, Debug)]
-struct GitLabRepository {
+    
+#[derive(Serialize, Deserialize, Debug)]
+struct Readme {
+    pub content: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Repository {
     name: String,
-    html_url_to_repo: String,
+    url: String,
+    content: String,
 }
 
 
@@ -41,11 +48,23 @@ fn index() -> NamedFile{
 }
 
 #[get("/api/v0/github")]
-fn get_github_repos() -> Json<Vec<GithubRepository>> {
+fn get_github_repos() -> Json<Vec<Repository>> {
     let req_url = format!("https://api.github.com/users/nehri97/repos");
     let mut response = reqwest::get(&req_url).unwrap();
     let repos: Vec<GithubRepository> = response.json().unwrap();
-    Json(repos)
+    let mut final_repos: Vec<Repository> = Vec::new();
+    for i in repos {
+        let readme_url = format!("https://api.github.com/repos/{owner}/{name}/readme", name = i.name, owner = "nehri97");
+        let mut rm_response = reqwest::get(&readme_url).unwrap();
+        let readme: Readme = rm_response.json().unwrap();
+        let final_repo = Repository {
+            name: i.name,
+            url: i.html_url,
+            content: readme.content
+        };
+        final_repos.push(final_repo);
+    }
+    Json(final_repos)
 }
 
 fn configure() -> rocket::Config {
